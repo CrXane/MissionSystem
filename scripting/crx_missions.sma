@@ -1,4 +1,4 @@
-/* Zombie Plague Mission System */
+/* Zombie Plague Missions System */
 
 #include <amxmodx>
 #include <amxmisc>
@@ -12,7 +12,7 @@
 
 #define team(%1) get_user_team(%1)
 
-#define VERSION "3.1"
+#define VERSION "3.2"
 #define MENU_MAX_ITEMS 64
 
 new filename[256];
@@ -140,23 +140,24 @@ public clcmd_menu(id){
 	}
 	
 	if (Player_Challange[id][challange] == true){
-		new kills[32], finished[32];
-		if (team(id) == ZOMBIE){
-			if (Player_Challange[id][Player_Infects] == Player_Challange[id][Player_iMenuAmount]){
-				formatex(finished, charsmax(finished), "You completed this mission");
+		new kills[32], finished[32], amount;
+		
+		switch (team(id)){
+			case HUMAN: {
+				amount = Player_Challange[id][Player_Kills];
+				formatex(kills, charsmax(kills), "\wInfects\r: \w%d\y/\w%d", 
+					amount, Player_Challange[id][Player_iMenuAmount]);
 			}
 			
-			formatex(kills, charsmax(kills), "\wInfects\r: \w%d\y/\w%d", 
-				Player_Challange[id][Player_Infects], Player_Challange[id][Player_iMenuAmount]);
+			case ZOMBIE: {
+				amount = Player_Challange[id][Player_Infects];
+				formatex(kills, charsmax(kills), "\wKills\r: \w%d\y/\w%d", 
+					amount, Player_Challange[id][Player_iMenuAmount]);
+			}
 		}
 		
-		else if (team(id) == HUMAN){
-			if (Player_Challange[id][Player_Kills] == Player_Challange[id][Player_iMenuAmount]){
-				formatex(finished, charsmax(finished), "You completed this mission");
-			}
-			
-			formatex(kills, charsmax(kills), "\wKills\r: \w%d\y/\w%d", 
-				Player_Challange[id][Player_Kills], Player_Challange[id][Player_iMenuAmount]);
+		if (amount >= Player_Challange[id][Player_iMenuAmount]){
+			formatex(finished, charsmax(finished), "You completed this mission");
 		}
 		
 		//CC_SendMessage(id, "%L", id, "CHANGED_NEXTMAP");
@@ -235,37 +236,8 @@ public event_death(){
 		reset_user_challange(Victim);
 	}
 	
-	if (Player_Challange[Attacker][challange] == true && Player_Challange[Attacker][complete] == false){
-		if (team(Attacker) == 1){
-			if (equali(Player_Challange[Attacker][Player_MenuType], "i")){
-				Player_Challange[Attacker][Player_Infects]++;
-				if (Player_Challange[Attacker][Player_Infects] >= Player_Challange[Attacker][Player_iMenuAmount]){
-					if (equali(Player_Challange[Attacker][Player_MenuTypeReward], "c")){
-						challange_completed(Attacker, CASH);
-					}
-					
-					else if (equali(Player_Challange[Attacker][Player_MenuTypeReward], "a")){
-						challange_completed(Attacker, AMMO_PACKS);
-					}
-				}
-			}
-		}
-		
-		else if (team(Attacker) == 2){
-			if (equali(Player_Challange[Attacker][Player_MenuType], "k")){
-				Player_Challange[Attacker][Player_Kills]++;
-				if (Player_Challange[Attacker][Player_Kills] >= Player_Challange[Attacker][Player_iMenuAmount]){
-					if (equali(Player_Challange[Attacker][Player_MenuTypeReward], "c")){
-						challange_completed(Attacker, CASH);
-					}
-					
-					else if (equali(Player_Challange[Attacker][Player_MenuTypeReward], "a")){
-						challange_completed(Attacker, AMMO_PACKS);
-					}
-				}
-			}
-		}
-	}
+	user_challange_complete(Attacker);
+	
 	return PLUGIN_CONTINUE;			
 }
 
@@ -297,6 +269,10 @@ public logevent_round_end(){
 	}
 }
 
+////////////////////////////////
+//           Stocks           //
+////////////////////////////////
+
 stock challange_completed(id, type){
 	new reward;
 	
@@ -314,6 +290,33 @@ stock challange_completed(id, type){
 		}
 	}
 	Player_Challange[id][complete] = true;
+}
+
+stock user_challange_complete(id){
+	if (Player_Challange[id][challange] == true && Player_Challange[id][complete] == false){
+		new amount;
+		switch (team(id)){
+			case HUMAN: {
+				Player_Challange[id][Player_Kills]++
+				amount = Player_Challange[id][Player_Kills];
+			}
+			
+			case ZOMBIE: {
+				Player_Challange[id][Player_Infects]++;
+				amount = Player_Challange[id][Player_Infects];
+			}
+		}
+		
+		if (amount >= Player_Challange[id][Player_iMenuAmount]){
+			if (equali(Player_Challange[id][Player_MenuTypeReward], "c")){
+				challange_completed(id, CASH);
+			}
+					
+			else if (equali(Player_Challange[id][Player_MenuTypeReward], "a")){
+				challange_completed(id, AMMO_PACKS);
+			}
+		}
+	}
 }
 
 stock MenuAddCT(menuid){
