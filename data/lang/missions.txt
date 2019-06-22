@@ -1,8 +1,7 @@
 [en]
-ALIVE_ONLY = !tYou can only use this menu when you are alive
-CHANGED_NEXTMAP = !tMission can be changed nextmap
+ALIVE_ONLY = !tYou must be alive to open the menu
+CHANGED_NEXTMAP = !tYou can change the mission next round
 SELECTED_SUCCESSFULLY = !tMission selected successfully
 MISSION_FAILED = !tYou failed your mission
-MISSION_RESET = !tYour mission has been reset
 MISSION_ACCOMPLISHED_CASH = !gCongratulations! !tYou finished your mission, you won $!g%d
 MISSION_ACCOMPLISHED_AP = !gCongratulations! !tYou finished your mission, you won !g%d !tAP
