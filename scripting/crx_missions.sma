@@ -58,7 +58,7 @@ new item_name[128], send_data[32];
 
 new filename_content[][] = {
 	"; Params",
-	"; 1 - Mode [EASY, MEDIUM, HARD]",
+	"; 1 - Mode [EASY, MEDIUM, HARD, any...]",
 	"; 2 - Type [(k)ills, (i)nfectors]",
 	"; 3 - Amount of required kills/infections",
 	"; 4 - Reward Type [(c)ash, (a)mmo packs]",
