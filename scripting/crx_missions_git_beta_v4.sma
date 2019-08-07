@@ -2,8 +2,6 @@
    A final unreleased "NOT-WORKING" version which I couldn't finish myself.
 */
 
-
-
 /* Zombie Plague Missions System */
 
 #include <amxmodx>
